@@ -4,9 +4,10 @@
 
 - 可以存多個收款帳戶，每個帳戶可以加暱稱。帳戶列表係 accordion，撳一下就揀中並展開，QR Code 同編輯欄位都喺同一張卡入面。
 - 即改即存，可以拖拉排序；刪除要撳兩下確認。
+- 金額選填（1 至 999,999 元），所有帳戶共用，唔會記住，reload 就清空。
 - QR Code 下面顯示銀行同完整帳號，方便對方手動轉帳；可以下載 1024 px PNG。
 
-TWQR 字串格式同銀行清單來自 [JTH58/payme](https://github.com/JTH58/payme)（MIT），只保留「個人轉帳」，冇金額同備註。
+TWQR 字串格式同銀行清單來自 [JTH58/payme](https://github.com/JTH58/payme)（MIT），只保留「個人轉帳」同金額，冇備註。
 
 ## 開發
 
@@ -28,7 +29,8 @@ engine/    純 TypeScript，冇 Vue 或瀏覽器依賴，bun test 測呢層
   banks.json     銀行代碼清單（來自 payme）
 app/       Nuxt 單頁，只負責收集輸入、調用引擎、渲染輸出
   app.vue        帳戶 accordion 列表
-  components/    TwqrCode（QR 同下載）
+  components/    TwqrCode（QR 同帳戶資料）
+  utils/         twqrImage（出 SVG、下載 PNG）
   composables/   useAccounts（帳戶列表，記 localStorage）
 ```
 
@@ -48,4 +50,4 @@ NUXT_APP_BASE_URL=/ bun run generate
 
 ## 暫時唔做
 
-金額、備註、分享連結、QR 樣式、離線（service worker）。
+備註、分享連結、QR 樣式、離線（service worker）。

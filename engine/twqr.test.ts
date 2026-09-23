@@ -1,5 +1,15 @@
 import { describe, expect, test } from 'bun:test'
-import { accountLabel, createTwqrString, findBank, isAccountComplete, qrImageFilename, type Account } from './twqr'
+import {
+  accountLabel,
+  createTwqrString,
+  findBank,
+  formatAmount,
+  isAccountComplete,
+  isValidAmount,
+  normalizeAmountInput,
+  qrImageFilename,
+  type Account,
+} from './twqr'
 
 const account = (overrides: Partial<Account> = {}): Account => ({
   id: 'a',
@@ -19,6 +29,12 @@ describe('createTwqrString', () => {
   test('a 16-digit account number is left as is', () => {
     expect(decodeURIComponent(createTwqrString('013', '1234567890123456'))).toContain('D6=1234567890123456&')
   })
+
+  test('an amount goes into D1 in cents, between D6 and D10', () => {
+    expect(decodeURIComponent(createTwqrString('822', '1234567890', '500'))).toBe(
+      'TWQRP://個人轉帳/158/02/V1?D5=822&D6=0000001234567890&D1=50000&D10=901',
+    )
+  })
 })
 
 describe('isAccountComplete', () => {
@@ -36,12 +52,41 @@ describe('isAccountComplete', () => {
   })
 })
 
-describe('accountLabel', () => {
-  test('shows the nickname with the bank short name and last 4 digits', () => {
-    expect(accountLabel(account({ nickname: '薪轉' }))).toBe('薪轉（中國信託 ****7890）')
+describe('normalizeAmountInput', () => {
+  test('keeps digits only and drops leading zeros', () => {
+    expect(normalizeAmountInput('1,000')).toBe('1000')
+    expect(normalizeAmountInput('99.5')).toBe('995')
+    expect(normalizeAmountInput('0500')).toBe('500')
+    expect(normalizeAmountInput('000')).toBe('0')
+    expect(normalizeAmountInput('abc')).toBe('')
   })
 
-  test('without a nickname only the detail is shown', () => {
+  test('caps at 6 digits after stripping separators', () => {
+    expect(normalizeAmountInput('123,456')).toBe('123456')
+    expect(normalizeAmountInput('1234567')).toBe('123456')
+  })
+})
+
+describe('isValidAmount', () => {
+  test('empty is fine because the amount is optional, zero is not', () => {
+    expect(isValidAmount('')).toBe(true)
+    expect(isValidAmount('999999')).toBe(true)
+    expect(isValidAmount('0')).toBe(false)
+  })
+})
+
+describe('formatAmount', () => {
+  test('adds thousands separators', () => {
+    expect(formatAmount('50000')).toBe('NT$ 50,000')
+  })
+})
+
+describe('accountLabel', () => {
+  test('shows only the nickname when there is one', () => {
+    expect(accountLabel(account({ nickname: '薪轉' }))).toBe('薪轉')
+  })
+
+  test('without a nickname shows the bank short name and last 4 digits', () => {
     expect(accountLabel(account())).toBe('中國信託 ****7890')
   })
 
@@ -55,5 +100,9 @@ describe('qrImageFilename', () => {
   test('uses the nickname, or the bank code when there is none', () => {
     expect(qrImageFilename(account({ nickname: '薪轉' }))).toBe('twqr-薪轉-7890.png')
     expect(qrImageFilename(account())).toBe('twqr-822-7890.png')
+  })
+
+  test('appends the amount when there is one', () => {
+    expect(qrImageFilename(account({ nickname: '薪轉' }), '500')).toBe('twqr-薪轉-7890-500.png')
   })
 })
