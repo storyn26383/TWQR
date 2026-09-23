@@ -26,6 +26,7 @@ const NON_DIGITS = /\D/g
 const LEADING_ZEROS = /^0+(?=\d)/
 const ZERO_AMOUNT = '0'
 const VISIBLE_DIGITS = 4
+const LATIN_OR_DIGIT = /[A-Za-z0-9]/
 
 export const BANKS: Bank[] = banks
 
@@ -68,4 +69,16 @@ export const accountLabel = (account: Account) => {
 export const qrImageFilename = (account: Account, amount = '') => {
   const parts = ['twqr', account.nickname || account.bankCode, lastDigits(account.accountNumber), amount]
   return `${parts.filter(Boolean).join('-')}.png`
+}
+
+/** 中文同英文、數字之間加空格（中文文案排版指北），例如「我的 iPassMoney 帳戶」。 */
+const joinWithSpacing = (...parts: string[]) =>
+  parts.filter(Boolean).reduce((text, part) =>
+    LATIN_OR_DIGIT.test(text.at(-1)!) === LATIN_OR_DIGIT.test(part[0]!) ? `${text}${part}` : `${text} ${part}`)
+
+/** 分享畀付款人嘅文字，唔包暱稱（暱稱係自己用嘅標籤）。清單有電子支付機構，所以寫「帳戶」同「機構代碼」。 */
+export const shareText = (account: Account, amount = '') => {
+  const total = amount ? `總共是 ${formatAmount(amount)}，` : ''
+  const destination = joinWithSpacing('我的', findBank(account.bankCode)?.shortName ?? '', '帳戶')
+  return `嗨，${total}您可以轉帳至${destination}（機構代碼 ${account.bankCode}），帳號 ${account.accountNumber}，也可以直接掃描附圖的 QR Code 付款。`
 }

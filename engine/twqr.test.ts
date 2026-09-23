@@ -8,6 +8,7 @@ import {
   isValidAmount,
   normalizeAmountInput,
   qrImageFilename,
+  shareText,
   type Account,
 } from './twqr'
 
@@ -104,5 +105,28 @@ describe('qrImageFilename', () => {
 
   test('appends the amount when there is one', () => {
     expect(qrImageFilename(account({ nickname: '薪轉' }), '500')).toBe('twqr-薪轉-7890-500.png')
+  })
+})
+
+describe('shareText', () => {
+  test('addresses the payer without the nickname', () => {
+    expect(shareText(account({ nickname: '薪轉' }))).toBe(
+      '嗨，您可以轉帳至我的中國信託帳戶（機構代碼 822），帳號 1234567890，也可以直接掃描附圖的 QR Code 付款。',
+    )
+  })
+
+  test('states the total first when there is an amount', () => {
+    expect(shareText(account(), '50000')).toBe(
+      '嗨，總共是 NT$ 50,000，您可以轉帳至我的中國信託帳戶（機構代碼 822），帳號 1234567890，也可以直接掃描附圖的 QR Code 付款。',
+    )
+  })
+
+  test('puts spaces around a latin bank name', () => {
+    expect(shareText(account({ bankCode: '391' }))).toContain('至我的 iPassMoney 帳戶（')
+    expect(shareText(account({ bankCode: '824' }))).toContain('至我的 LINE Bank 帳戶（')
+  })
+
+  test('an unknown bank is just my account', () => {
+    expect(shareText(account({ bankCode: '999' }))).toContain('至我的帳戶（機構代碼 999）')
   })
 })

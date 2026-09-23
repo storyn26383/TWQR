@@ -9,6 +9,7 @@ import {
   isValidAmount,
   isValidBankCode,
   normalizeAmountInput,
+  shareText,
   type Account,
 } from '~~/engine/twqr'
 
@@ -28,6 +29,13 @@ const onAmountInput = (event: Event) => {
 const canShowQr = (account: Account) => isAccountComplete(account) && isValidAmount(amount.value)
 const qrHint = (account: Account) =>
   isAccountComplete(account) ? '金額須大於 0' : '填寫銀行代碼與帳號後產生 QR Code'
+
+const selectedAccount = computed(() => book.value.accounts.find(account => account.id === book.value.selectedId))
+const preparedPng = usePreparedTwqrPng(() => {
+  const account = selectedAccount.value
+  if (!account || !canShowQr(account)) return undefined
+  return { account: { ...account }, amount: amount.value }
+})
 
 /** 刪除要撳兩下：第一下變「確定刪除」，3 秒內再撳先刪。 */
 const confirmingDeleteId = ref<string>()
@@ -79,14 +87,25 @@ const requestDelete = (id: string) => {
               </button>
               <template v-if="account.id === book.selectedId">
                 <button
-                  v-if="canShowQr(account)"
+                  v-if="preparedPng"
                   type="button"
                   class="btn btn-ghost btn-sm btn-square opacity-70"
                   aria-label="下載收款碼"
-                  @click="downloadTwqrPng(account, amount)"
+                  @click="downloadFile(preparedPng)"
                 >
                   <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M12 4v11m-4-4 4 4 4-4M5 20h14" />
+                  </svg>
+                </button>
+                <button
+                  v-if="preparedPng && canShareFile(preparedPng)"
+                  type="button"
+                  class="btn btn-ghost btn-sm btn-square opacity-70"
+                  aria-label="分享收款碼"
+                  @click="shareFile(preparedPng, shareText(account, amount))"
+                >
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 15V3m-4 4 4-4 4 4M5 12v7a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-7" />
                   </svg>
                 </button>
                 <!-- 確認狀態加埋文字，唔好淨係靠變色提示再撳一下就會刪 -->
