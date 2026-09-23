@@ -18,7 +18,7 @@ const firstVisit = (): AccountBook => {
   return { accounts: [account], selectedId: account.id }
 }
 
-/** 收款帳戶列表同目前揀中嘅帳戶，最少保留一個。 */
+/** 收款帳戶列表同目前揀中嘅帳戶，可以刪到一個都冇。 */
 export const useAccounts = () => {
   const book = usePersistedState<AccountBook>('twqr.accounts', firstVisit)
 
@@ -29,9 +29,8 @@ export const useAccounts = () => {
   }
 
   const remove = (id: string) => {
-    if (book.value.accounts.length <= 1) return
     book.value.accounts = book.value.accounts.filter(account => account.id !== id)
-    if (book.value.selectedId === id) book.value.selectedId = book.value.accounts[0]!.id
+    if (book.value.selectedId === id) book.value.selectedId = book.value.accounts[0]?.id ?? ''
   }
 
   return { book, add, remove }
