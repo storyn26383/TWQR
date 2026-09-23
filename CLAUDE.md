@@ -21,7 +21,7 @@ bun run generate   # 靜態輸出到 .output/public
 ## 規則要點（唔好重新爭論）
 
 - TWQR 字串照抄 payme 嘅 builder：`TWQRP://個人轉帳/158/02/V1?D5=<行庫>&D6=<帳號補 0 到 16 位>&D1=<金額 × 100>&D10=901`，成條再 `encodeURIComponent`；冇金額就冇 D1。唔做備註（D9）。
-- 金額選填、所有帳戶共用，只係 `ref`，唔入 localStorage。輸入時用 `normalizeAmountInput` 即時淨係留數字、去前導零、截到 6 位（上限 999,999）；唯一唔合格係 0，會顯示紅字同唔出 QR。QR 下面顯示「NT$ 1,234」，PNG 檔名尾加金額。
+- 金額選填、所有帳戶共用，只係 `ref`，唔入 localStorage。輸入時用 `normalizeAmountInput` 即時淨係留數字、去前導零、截到 6 位（上限 999,999）；唯一唔合格係 0，會顯示紅字同唔出 QR。有金額時 input 右邊有「X」清除掣，清除後 focus 返 input。QR 下面顯示「NT$ 1,234」，PNG 檔名尾加金額。
 - 銀行代碼只驗 3 位數字；唔喺 `banks.json` 就顯示「查無此銀行代碼」，但照出 QR。帳號 10 至 16 位數字。
 - 銀行代碼用 `<input list>` + `<datalist>`，唔好加 `inputmode="numeric"`（會令用家打唔到銀行名搜尋）。
 - 多帳戶，暱稱選填。冇 `<select>`：帳戶列表係 accordion，同一時間只展開揀中嗰張，平時展開只有 QR 同帳戶資料；標題行有暱稱就淨係顯示暱稱，冇就顯示「簡稱 ****1234」，乜都未填就顯示「未填寫」。

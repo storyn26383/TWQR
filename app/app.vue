@@ -26,6 +26,12 @@ const onAmountInput = (event: Event) => {
   input.value = normalizeAmountInput(input.value)
   amount.value = input.value
 }
+const amountInput = useTemplateRef<HTMLInputElement>('amountInput')
+/** 清除之後即刻 focus，通常係要入新金額。 */
+const clearAmount = () => {
+  amount.value = ''
+  amountInput.value?.focus()
+}
 const canShowQr = (account: Account) => isAccountComplete(account) && isValidAmount(amount.value)
 const qrHint = (account: Account) =>
   isAccountComplete(account) ? '金額須大於 0' : '請先編輯帳戶'
@@ -66,7 +72,12 @@ const requestDelete = (id: string) => {
         <label class="section-label" for="amount">金額（選填）</label>
         <label class="input w-full">
           <span class="opacity-60">NT$</span>
-          <input id="amount" :value="amount" inputmode="numeric" placeholder="不填則由付款人輸入" @input="onAmountInput">
+          <input id="amount" ref="amountInput" :value="amount" inputmode="numeric" placeholder="不填則由付款人輸入" @input="onAmountInput">
+          <button v-if="amount" type="button" class="btn btn-ghost btn-xs btn-circle opacity-60" aria-label="清除金額" @click="clearAmount">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+              <path d="M6 6l12 12M18 6 6 18" />
+            </svg>
+          </button>
         </label>
         <p v-if="!isValidAmount(amount)" class="text-xs text-error">須大於 0</p>
       </section>
