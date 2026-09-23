@@ -31,7 +31,7 @@ bun run generate   # 靜態輸出到 .output/public
 - 刪除唔彈 `confirm()`、唔用 modal：兩段式按鈕，第一下變紅色並顯示「確定刪除」文字，3 秒內再撳先刪。
 - 一頁式，冇 `pages/`。
 - QR 用 `uqr` 出 SVG，quiet zone 4 格。下載 PNG 淨係 QR，1024 px，檔名 `twqr-<暱稱或代碼>-<尾 4 位>[-<金額>].png`。
-- 分享用原生 `navigator.share`，傳 PNG 同一句文字：「嗨，[總共是 NT$ 500，]您可以轉帳至我的<簡稱>帳戶（機構代碼 822），帳號 …，也可以直接掃描附圖的 QR Code 付款。」唔包暱稱；清單有電子支付機構，所以唔寫「銀行」；簡稱係英文時用 `joinWithSpacing` 加空格。PNG 由 `usePreparedTwqrPng` 預先整好，撳掣時同步呼叫 `share()`，前面唔可以 `await`，否則 Safari 會因為 user gesture 過期拋 `NotAllowedError`。閂咗分享面板嘅 `AbortError` 唔當錯誤。
+- 分享用原生 `navigator.share`，傳 PNG 同一句文字：「嗨，[總共是 NT$ 500，]您可以轉帳至我的<簡稱>帳戶（機構代碼 807），帳號 …，也可以直接掃描附圖的 QR Code 付款，感謝。」唔包暱稱；清單有電子支付機構，所以唔寫「銀行」；簡稱係英文時用 `joinWithSpacing` 加空格。PNG 由 `usePreparedTwqrPng` 預先整好，撳掣時同步呼叫 `share()`，前面唔可以 `await`，否則 Safari 會因為 user gesture 過期拋 `NotAllowedError`。閂咗分享面板嘅 `AbortError` 唔當錯誤。
 - 部署同 PWA 照 mahjong，冇 service worker。
 
 ## 介面文案

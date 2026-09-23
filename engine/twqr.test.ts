@@ -15,15 +15,15 @@ import {
 const account = (overrides: Partial<Account> = {}): Account => ({
   id: 'a',
   nickname: '',
-  bankCode: '822',
+  bankCode: '807',
   accountNumber: '1234567890',
   ...overrides,
 })
 
 describe('createTwqrString', () => {
   test('pads the account number to 16 digits and encodes the whole URI', () => {
-    expect(createTwqrString('822', '1234567890')).toBe(
-      encodeURIComponent('TWQRP://個人轉帳/158/02/V1?D5=822&D6=0000001234567890&D10=901'),
+    expect(createTwqrString('807', '1234567890')).toBe(
+      encodeURIComponent('TWQRP://個人轉帳/158/02/V1?D5=807&D6=0000001234567890&D10=901'),
     )
   })
 
@@ -32,8 +32,8 @@ describe('createTwqrString', () => {
   })
 
   test('an amount goes into D1 in cents, between D6 and D10', () => {
-    expect(decodeURIComponent(createTwqrString('822', '1234567890', '500'))).toBe(
-      'TWQRP://個人轉帳/158/02/V1?D5=822&D6=0000001234567890&D1=50000&D10=901',
+    expect(decodeURIComponent(createTwqrString('807', '1234567890', '500'))).toBe(
+      'TWQRP://個人轉帳/158/02/V1?D5=807&D6=0000001234567890&D1=50000&D10=901',
     )
   })
 })
@@ -88,7 +88,7 @@ describe('accountLabel', () => {
   })
 
   test('without a nickname shows the bank short name and last 4 digits', () => {
-    expect(accountLabel(account())).toBe('中國信託 ****7890')
+    expect(accountLabel(account())).toBe('永豐銀行 ****7890')
   })
 
   test('an unknown bank falls back to its code, an empty account to a placeholder', () => {
@@ -100,7 +100,7 @@ describe('accountLabel', () => {
 describe('qrImageFilename', () => {
   test('uses the nickname, or the bank code when there is none', () => {
     expect(qrImageFilename(account({ nickname: '薪轉' }))).toBe('twqr-薪轉-7890.png')
-    expect(qrImageFilename(account())).toBe('twqr-822-7890.png')
+    expect(qrImageFilename(account())).toBe('twqr-807-7890.png')
   })
 
   test('appends the amount when there is one', () => {
@@ -111,13 +111,13 @@ describe('qrImageFilename', () => {
 describe('shareText', () => {
   test('addresses the payer without the nickname', () => {
     expect(shareText(account({ nickname: '薪轉' }))).toBe(
-      '嗨，您可以轉帳至我的中國信託帳戶（機構代碼 822），帳號 1234567890，也可以直接掃描附圖的 QR Code 付款。',
+      '嗨，您可以轉帳至我的永豐銀行帳戶（機構代碼 807），帳號 1234567890，也可以直接掃描附圖的 QR Code 付款，感謝。',
     )
   })
 
   test('states the total first when there is an amount', () => {
     expect(shareText(account(), '50000')).toBe(
-      '嗨，總共是 NT$ 50,000，您可以轉帳至我的中國信託帳戶（機構代碼 822），帳號 1234567890，也可以直接掃描附圖的 QR Code 付款。',
+      '嗨，總共是 NT$ 50,000，您可以轉帳至我的永豐銀行帳戶（機構代碼 807），帳號 1234567890，也可以直接掃描附圖的 QR Code 付款，感謝。',
     )
   })
 

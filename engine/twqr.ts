@@ -80,5 +80,5 @@ const joinWithSpacing = (...parts: string[]) =>
 export const shareText = (account: Account, amount = '') => {
   const total = amount ? `總共是 ${formatAmount(amount)}，` : ''
   const destination = joinWithSpacing('我的', findBank(account.bankCode)?.shortName ?? '', '帳戶')
-  return `嗨，${total}您可以轉帳至${destination}（機構代碼 ${account.bankCode}），帳號 ${account.accountNumber}，也可以直接掃描附圖的 QR Code 付款。`
+  return `嗨，${total}您可以轉帳至${destination}（機構代碼 ${account.bankCode}），帳號 ${account.accountNumber}，也可以直接掃描附圖的 QR Code 付款，感謝。`
 }
