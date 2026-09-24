@@ -171,7 +171,7 @@ const requestDelete = (id: string) => {
                     aria-label="帳號"
                   >
                   <p v-if="account.accountNumber && !isValidAccountNumber(account.accountNumber)" class="mt-1 text-xs text-error">
-                    須為 10 至 16 碼數字
+                    須為 8 至 16 碼數字
                   </p>
                 </div>
               </div>

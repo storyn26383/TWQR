@@ -39,10 +39,11 @@ describe('createTwqrString', () => {
 })
 
 describe('isAccountComplete', () => {
-  test('needs a 3-digit bank code and a 10 to 16 digit account number', () => {
+  test('needs a 3-digit bank code and an 8 to 16 digit account number', () => {
     expect(isAccountComplete(account())).toBe(true)
     expect(isAccountComplete(account({ bankCode: '82' }))).toBe(false)
-    expect(isAccountComplete(account({ accountNumber: '123456789' }))).toBe(false)
+    expect(isAccountComplete(account({ accountNumber: '12345678' }))).toBe(true)
+    expect(isAccountComplete(account({ accountNumber: '1234567' }))).toBe(false)
     expect(isAccountComplete(account({ accountNumber: '12345678901234567' }))).toBe(false)
     expect(isAccountComplete(account({ accountNumber: '123-456-7890' }))).toBe(false)
   })

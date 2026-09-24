@@ -20,7 +20,7 @@ const NEW_TAIWAN_DOLLAR = '901'
 const CENTS_PER_DOLLAR = 100
 
 const BANK_CODE_PATTERN = /^\d{3}$/
-const ACCOUNT_NUMBER_PATTERN = /^\d{10,16}$/
+const ACCOUNT_NUMBER_PATTERN = /^\d{8,16}$/
 const MAX_AMOUNT_DIGITS = 6
 const NON_DIGITS = /\D/g
 const LEADING_ZEROS = /^0+(?=\d)/
