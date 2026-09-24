@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-TWQR 收款碼：輸入銀行代碼同帳號產生臺灣共用支付碼。技術同風格跟 `../mahjong`。
+TWQR 收款碼：輸入銀行代碼同帳號產生臺灣通用收款碼。技術同風格跟 `../mahjong`。
 
 ## 指令
 
@@ -14,7 +14,7 @@ bun run generate   # 靜態輸出到 .output/public
 
 ## 架構
 
-- `engine/twqr.ts`：純 TypeScript，冇 Vue、冇瀏覽器 API。字串格式、驗證、銀行查詢、選項文字、PNG 檔名都喺度，改動要有 `bun test`。
+- `engine/twqr.ts`：純 TypeScript，冇 Vue、冇瀏覽器 API。字串格式、驗證、機構查詢、帳戶標題、分享文字、PNG 檔名都喺度，改動要有 `bun test`。
 - `app/`：Nuxt 4 SPA（`ssr: false`），冇 `pages/`，淨係 `app.vue` 一頁。Tailwind 4 + daisyUI 5，內建主題 `autumn`。
 - 帳戶存成 `{ accounts, selectedId }` 一個 object（`usePersistedState` 會用 `{ ...default, ...saved }` 合併，唔可以直接存 array）。
 

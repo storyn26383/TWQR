@@ -1,11 +1,12 @@
 # TWQR 收款碼
 
-輸入銀行代碼同帳號，即時產生臺灣共用支付碼（TWQR）轉帳 QR Code 嘅手機瀏覽器小工具，唔使安裝、冇後端，資料只存喺本機 localStorage。
+輸入銀行代碼同帳號，即時產生臺灣通用收款碼（TWQR）轉帳 QR Code 嘅手機瀏覽器小工具，唔使安裝、冇後端，資料只存喺本機 localStorage。
 
 - 可以存多個收款帳戶，每個帳戶可以加暱稱。帳戶列表係 accordion，撳一下就揀中並展開顯示 QR Code。
 - 撳「編輯」先會出表單、拖拉排序同刪除；即改即存，刪除要撳兩下確認。
-- 金額選填（1 至 999,999 元），所有帳戶共用，唔會記住，reload 就清空。
-- QR Code 下面顯示銀行同完整帳號，方便對方手動轉帳；可以下載 1024 px PNG，或者用系統原生分享傳圖片同文字（唔包暱稱）。
+- 金額選填（1 至 999,999 元），所有帳戶共用，唔會記住，reload 就清空；有清除掣，有金額會顯示喺 QR Code 下面。
+- QR Code 下面顯示銀行同完整帳號，方便對方手動轉帳；撳帳號可以一鍵複製。
+- 可以下載 1024 px PNG，或者用系統原生分享傳圖片同文字（唔包暱稱）。
 
 TWQR 字串格式同銀行清單來自 [JTH58/payme](https://github.com/JTH58/payme)（MIT），只保留「個人轉帳」同金額，冇備註。
 
@@ -25,13 +26,13 @@ bun run generate   # 輸出靜態檔到 .output/public
 
 ```
 engine/    純 TypeScript，冇 Vue 或瀏覽器依賴，bun test 測呢層
-  twqr.ts        TWQR 字串、驗證、銀行查詢、選項文字同檔名
-  banks.json     銀行代碼清單（來自 payme）
+  twqr.ts        TWQR 字串、驗證、機構查詢、帳戶標題、分享文字同檔名
+  banks.json     機構代碼清單，包括銀行同電子支付（來自 payme）
 app/       Nuxt 單頁，只負責收集輸入、調用引擎、渲染輸出
-  app.vue        帳戶 accordion 列表
-  components/    TwqrCode（QR 同帳戶資料）
+  app.vue        金額 input、帳戶 accordion 列表同編輯模式
+  components/    TwqrCode（QR、帳戶資料、複製帳號）
   utils/         twqrImage（出 SVG、整 PNG、下載、分享）
-  composables/   useAccounts（帳戶列表，記 localStorage）、usePreparedTwqrPng（預先整 PNG）
+  composables/   useAccounts（帳戶列表）、usePersistedState（記 localStorage）、usePreparedTwqrPng（預先整 PNG）
 ```
 
 技術棧：Nuxt（SPA，`ssr: false`）、Tailwind + daisyUI、Bun、[uqr](https://github.com/unjs/uqr)、[vue-draggable-plus](https://github.com/Alfred-Skyblue/vue-draggable-plus)。
@@ -51,3 +52,7 @@ NUXT_APP_BASE_URL=/ bun run generate
 ## 暫時唔做
 
 備註、分享連結、QR 樣式、離線（service worker）。
+
+## 授權
+
+[MIT](LICENSE)。`engine/banks.json` 同 TWQR 字串格式來自 payme，佢嘅 MIT 授權聲明一併收錄喺 `LICENSE`。
