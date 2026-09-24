@@ -23,6 +23,27 @@ body {
   color: color-mix(in oklab, var(--color-base-content) 60%, transparent);
 }
 
+/* 帳戶卡展開區：grid 0fr → 1fr 過渡高度（Safari 未支援 interpolate-size）。
+   overflow 要喺外層：fr 小於 1 時 track 只係容器高度嘅 f 倍，喺內層裁會比卡片底部裁得快。 */
+.collapsible {
+  display: grid;
+  grid-template-rows: 0fr;
+  overflow: hidden;
+  transition: grid-template-rows 200ms ease-out;
+}
+.collapsible[data-open="true"] {
+  grid-template-rows: 1fr;
+}
+/* padding 要放喺再入一層，否則收起時 padding 仍然佔位 */
+.collapsible > * {
+  min-height: 0;
+}
+@media (prefers-reduced-motion: reduce) {
+  .collapsible {
+    transition: none;
+  }
+}
+
 /* 白色卡片容器 */
 .panel {
   border: 1px solid var(--color-base-300);

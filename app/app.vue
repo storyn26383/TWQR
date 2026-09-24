@@ -91,7 +91,7 @@ const requestDelete = (id: string) => {
         </div>
         <p v-if="!book.accounts.length" class="panel p-6 text-center text-sm opacity-60">尚未新增收款帳戶</p>
         <VueDraggable v-model="book.accounts" handle=".drag-handle" :animation="150" class="flex flex-col gap-2">
-          <div v-for="account in book.accounts" :key="account.id" class="panel flex flex-col gap-3 p-3">
+          <div v-for="account in book.accounts" :key="account.id" class="panel p-3">
             <div class="flex items-center gap-2">
               <span v-if="isEditing" class="drag-handle flex cursor-grab items-center px-1 opacity-40" role="img" aria-label="拖曳排序">
                 <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
@@ -147,7 +147,7 @@ const requestDelete = (id: string) => {
               </template>
             </div>
 
-            <div v-if="isEditing" class="flex flex-col gap-2">
+            <div v-if="isEditing" class="mt-3 flex flex-col gap-2">
               <input v-model="account.nickname" class="input input-sm w-full" placeholder="暱稱（選填）" aria-label="暱稱">
               <div class="grid grid-cols-[7rem_1fr] gap-2">
                 <div>
@@ -176,10 +176,20 @@ const requestDelete = (id: string) => {
                 </div>
               </div>
             </div>
-            <template v-else-if="account.id === book.selectedId">
-              <TwqrCode v-if="canShowQr(account)" :account="account" :amount="amount" />
-              <p v-else class="py-6 text-center text-sm opacity-60">{{ qrHint(account) }}</p>
-            </template>
+            <!-- 每張卡都 render 住，用 grid 過渡展開；收起嘅用 inert 避免 focus 入去 -->
+            <div
+              v-else
+              class="collapsible"
+              :data-open="account.id === book.selectedId"
+              :inert="account.id !== book.selectedId"
+            >
+              <div>
+                <div class="pt-3">
+                  <TwqrCode v-if="canShowQr(account)" :account="account" :amount="amount" />
+                  <p v-else class="py-6 text-center text-sm opacity-60">{{ qrHint(account) }}</p>
+                </div>
+              </div>
+            </div>
           </div>
         </VueDraggable>
         <button v-if="isEditing" type="button" class="btn btn-dash btn-neutral btn-block" @click="add">新增帳戶</button>

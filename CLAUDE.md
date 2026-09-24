@@ -26,6 +26,7 @@ bun run generate   # 靜態輸出到 .output/public
 - 銀行代碼用 `<input list>` + `<datalist>`，唔好加 `inputmode="numeric"`（會令用家打唔到銀行名搜尋）。
 - 多帳戶，暱稱選填。冇 `<select>`：帳戶列表係 accordion，同一時間只展開揀中嗰張，平時展開只有 QR 同帳戶資料；標題行有暱稱就淨係顯示暱稱，冇就顯示「簡稱 ****1234」，乜都未填就顯示「未填寫」。
 - 編輯模式：「收款帳戶」標題右邊「編輯」／「完成」切換。表單、拖拉排序、刪除、「新增帳戶」只喺編輯模式出現；編輯模式入面全部卡片展開做表單，唔顯示 QR。input 即改即存。開 app 時冇完整帳戶就自動進入編輯模式；一個帳戶都冇就強制留喺編輯模式（冇「完成」掣）。可以刪到一個都冇。
+- 切換揀中帳戶有 200 ms 展開／收起動畫：只變高度，內容唔縮放、唔淡出，由卡片底部逐步裁走。用 `.collapsible` 嘅 grid `0fr → 1fr`，因為 Safari 未支援 `interpolate-size`，所以每張卡嘅展開內容都 render 住，收起嘅加 `inert`。`overflow: hidden` 一定要放喺 `.collapsible` 本身，唔好放喺內層（fr 小於 1 時 track 比容器矮，會裁得比卡片快）。`prefers-reduced-motion` 時冇動畫。編輯模式切換、新增、刪除冇動畫。
 - 平時模式揀中嘅卡標題行右邊有下載、分享兩個 icon-only 掣（只喺出到 QR 時先有；分享要 `navigator.canShare` 支援圖片先顯示，唔支援就唔顯示）。
 - 排序用 `vue-draggable-plus` 拖拉（原生 drag and drop 喺 iOS 用唔到），把手只喺編輯模式出現。
 - 刪除唔彈 `confirm()`、唔用 modal：兩段式按鈕，第一下變紅色並顯示「確定刪除」文字，3 秒內再撳先刪。
