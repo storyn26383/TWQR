@@ -187,7 +187,7 @@ const requestDelete = (id: string) => {
     </main>
 
     <datalist :id="BANK_LIST_ID">
-      <option v-for="bank in BANKS" :key="bank.code" :value="bank.code">{{ bank.name }}</option>
+      <option v-for="bank in BANKS" :key="bank.code" :value="bank.code">{{ bank.shortName }}</option>
     </datalist>
   </div>
 </template>

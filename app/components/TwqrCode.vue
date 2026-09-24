@@ -27,7 +27,7 @@ onBeforeUnmount(() => clearTimeout(copiedTimer))
     <div class="w-full max-w-72" v-html="svg" />
     <div class="text-center">
       <p v-if="amount" class="mb-2 text-2xl font-bold text-primary">{{ formatAmount(amount) }}</p>
-      <p class="text-sm opacity-60">{{ account.bankCode }} {{ findBank(account.bankCode)?.name }}</p>
+      <p class="text-sm opacity-60">{{ account.bankCode }} {{ findBank(account.bankCode)?.shortName }}</p>
       <button
         v-if="canCopy"
         type="button"
